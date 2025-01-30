@@ -97,7 +97,7 @@ const ProductDetailsCard = (props) => {
         {/* Display images */}
         <div>
           <div className="flex gap-4 py-4 justify-center overflow-x-auto">
-            {data.detail[0].images?.map((item, index) => (
+            {images?.map((item, index) => (
               <img
                 key={index}
                 src={item?.image}
