@@ -13,7 +13,7 @@ import { statusCode } from "../../utils/statusCode";
 import Loader from "../Loader";
 import ErrorCard from "../ErrorCard";
 import ScrollToTop from "../ScrollToTop";
-import CarouselComponent from './CarouselComponent'
+import CarouselComponent from "./CarouselComponent";
 import { getCategories } from "../../store/categorySlice";
 
 const Home = () => {
@@ -40,17 +40,12 @@ const Home = () => {
   useEffect(() => {
     dispatch(getProducts());
     dispatch(getCategories());
-
   }, [dispatch]);
 
   const { data, status } = useSelector((state) => state.products);
-  const { data : categories, status : categoriesStatus } = useSelector((state) => state.categories);
-
-
-
-console.log(categories)
-
-
+  const { data: categories, status: categoriesStatus } = useSelector(
+    (state) => state.categories
+  );
 
   const trendingProductsData = data.filter(
     (product) => product.trending === true
@@ -65,22 +60,31 @@ console.log(categories)
   const renderHomeBanner = () => (
     <section className="home-banner">
       <div className="w-[40%]">
-        <h1 className="home-banner-title">Glasses <br /> & Lens</h1>
+        <h1 className="home-banner-title">
+          Glasses <br /> & Lens
+        </h1>
         <p className="home-banner-caption pb-3">
           Buy the best high-quality sunglasses from us.
           <br />
           More than 100 types of assortment.
         </p>
         <Link to="/products" className="link-item">
-          <button type="button" className="text-white bg-black font-medium rounded-lg text-base px-3 pt-2.5 pb-2 me-2 mb-2">Start Shopping</button>
+          <button
+            type="button"
+            className="text-white bg-black font-medium rounded-lg text-base px-3 pt-2.5 pb-2 me-2 mb-2"
+          >
+            Start Shopping
+          </button>
         </Link>
         <a href="#categoriesSection" onClick={scrollToCategories}>
-          <button type="button" className="text-black font-medium rounded-lg text-base px-3 pt-2.5 pb-2 text-center inline-flex items-center">
+          <button
+            type="button"
+            className="text-black font-medium rounded-lg text-base px-3 pt-2.5 pb-2 text-center inline-flex items-center"
+          >
             Explore More
             <BsArrowDownRightCircle className="ml-2 text-lg" />
           </button>
         </a>
-
       </div>
       {/* <div className="home-banner-image-container flex">
         <img
@@ -92,8 +96,6 @@ console.log(categories)
       <div className="w-[60%]">
         <CarouselComponent />
       </div>
-
-
     </section>
   );
 
@@ -111,7 +113,9 @@ console.log(categories)
   const renderCategoriesList = () => (
     <section className="home-categories-view row">
       <div className="home-categories-title-container col-12" ref={ref}>
-        <h2 className="home-trending-title text-center mb-2 text-4xl">Categories</h2>
+        <h2 className="home-trending-title text-center mb-2 text-4xl">
+          Categories
+        </h2>
       </div>
       {categories.map((category) => (
         <CategoryCard key={category.id} categoryDetails={category} />

@@ -12,8 +12,6 @@ const LoginCard = () => {
 
   const usersList = useSelector((state) => state.usersList);
 
-  console.log(usersList);
-
   const navigate = useNavigate();
 
   const submitForm = (event) => {
@@ -43,7 +41,6 @@ const LoginCard = () => {
 
   return (
     <>
-
       {/* <form className="login-form bg-white shadow-sm" onSubmit={submitForm}>
       <h1>Login to Your Account</h1>
       <label htmlFor="signUpEmail">Email</label>
@@ -87,7 +84,7 @@ const LoginCard = () => {
     </form> */}
       <section className="px-7 py-10 rounded-md shadow-md bg-white/70 flex flex-col gap-6 w-full max-w-lg">
         <Link to="/">
-            <h1 className="login-page-logo text-3xl">myglass</h1>
+          <h1 className="login-page-logo text-3xl">myglass</h1>
         </Link>
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold mb-3">Login to your account</h1>
@@ -116,7 +113,11 @@ const LoginCard = () => {
             </label>
             {errorMsg !== "" && <p className="login-error-msg">{errorMsg}</p>}
             <div className="w-full py-2 flex flex-col gap-4 items-center">
-              <button type="submit" id="loginButton" className="login-button bg-[#111827] hover:bg-[#1F2937] text-white px-10 pt-2 pb-1.5">
+              <button
+                type="submit"
+                id="loginButton"
+                className="login-button bg-[#111827] hover:bg-[#1F2937] text-white px-10 pt-2 pb-1.5"
+              >
                 Login
               </button>
               <button
@@ -137,7 +138,6 @@ const LoginCard = () => {
         </div>
       </section>
     </>
-
   );
 };
 

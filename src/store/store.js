@@ -8,13 +8,11 @@ import filtersSlice from "./filtersSlice";
 import usersListSlice from "./usersListSlice";
 import categoriesSlice from "./categorySlice";
 
-
 const store = configureStore({
   reducer: {
     cart: cartSlice,
     products: productsSlice,
     categories: categoriesSlice,
-
     wishlist: wishlistSlice,
     productDetails: productDetailsSlice,
     user: userSlice,

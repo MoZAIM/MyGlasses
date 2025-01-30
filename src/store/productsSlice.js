@@ -28,15 +28,10 @@ const productsSlice = createSlice({
 });
 
 export const getProducts = createAsyncThunk("products/get", async () => {
-
-  const res = await api.get('/product')
+  const res = await api.get("/product");
   if (res.data) {
-
-    console.log( "demo : ",res.data)
     return res.data;
   }
-
-
 });
 
 export default productsSlice.reducer;

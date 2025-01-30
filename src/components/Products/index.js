@@ -20,10 +20,7 @@ const Products = () => {
     dispatch(getProducts());
   }, [dispatch]);
 
-  const filteredData =  useApplyFilters();
-  console.log("🚀 ~ Products ~ filteredData:", filteredData)
-
-  
+  const filteredData = useApplyFilters();
 
   useEffect(() => {
     const toggleShowArrow = () => {

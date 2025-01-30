@@ -18,13 +18,8 @@ const ProductDetailsCard = (props) => {
   const productId = useParams("id");
   const dispatch = useDispatch();
 
-  const [isAddedToCart, setIsAddedToCart] = useState(false);
-  const [isAddedToWishlist, setIsAddedToWishlist] = useState(false);
-
-  const cartProducts = useSelector((state) => state.cart);
-  const wishlistProducts = useSelector((state) => state.wishlist);
-
   const { data, status } = useSelector((state) => state.productDetails);
+
   const {
     id,
     brand,
@@ -37,7 +32,24 @@ const ProductDetailsCard = (props) => {
     price,
     rating,
     weight,
+    detail,
   } = data;
+  console.log("🚀 ~ ProductDetailsCard ~ image:", image);
+  console.log("🚀 ~ ProductDetailsCard ~ detail:", detail);
+
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
+  const [isAddedToWishlist, setIsAddedToWishlist] = useState(false);
+  const [displayImage, setDisplayImage] = useState(image);
+  const [images, setImages] = useState(
+    detail ? (detail[0] ? detail[0].images : []) : []
+  );
+
+  const [loading, setLoading] = useState(true);
+
+  console.log("🚀 ~ ProductDetailsCard ~ images:", images);
+
+  const cartProducts = useSelector((state) => state.cart);
+  const wishlistProducts = useSelector((state) => state.wishlist);
 
   useEffect(() => {
     setIsAddedToCart(cartProducts.some((product) => product.id === id));
@@ -48,7 +60,10 @@ const ProductDetailsCard = (props) => {
   }, [wishlistProducts, id]);
 
   useEffect(() => {
-    dispatch(getProductDetails(productId.id));
+    (async () => {
+      await dispatch(getProductDetails(productId.id));
+      setLoading(false);
+    })();
   }, [dispatch, productId.id]);
 
   const addToCart = () => {
@@ -66,15 +81,37 @@ const ProductDetailsCard = (props) => {
     setIsAddedToWishlist(false);
   };
 
+  if (loading && !detail) return "loading ...";
+
   const renderProductDetailsCardSuccessView = () => (
     <div className="product-details-card gap-5 pt-8">
-      <div className="relative h-[85%] p-7 bg-black/[0.075] flex items-center justify-center rounded-lg">
-        <img
-          className="product-details-card-image"
-          src={image}
-          alt="productImage"
-        />
+      <div>
+        <div className="relative h-[85%] p-7 bg-black/[0.075] flex items-center justify-center rounded-lg">
+          <img
+            className="product-details-card-image"
+            src={displayImage || image}
+            alt="productImage"
+          />
+        </div>
+
+        {/* Display images */}
+        <div>
+          <div className="flex gap-4 py-4 justify-center overflow-x-auto">
+            {data.detail[0].images?.map((item, index) => (
+              <img
+                key={index}
+                src={item?.image}
+                alt="Thumbnail 1"
+                className="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
+                onClick={() => {
+                  setDisplayImage(item.image);
+                }}
+              />
+            ))}
+          </div>
+        </div>
       </div>
+
       <div className="p-4 product-details-card-description">
         <h1 className="product-details-card-title">{name}</h1>
         <p className="product-details-card-info">{description}</p>
@@ -85,7 +122,6 @@ const ProductDetailsCard = (props) => {
             <AiFillStar className="color-yellow" />
             <AiFillStar className="color-yellow" />
             <AiFillStar className="color-yellow" />
-
           </p>
           <div>
             <span className="text-gray-400">({rating}) Rating</span>
@@ -110,6 +146,24 @@ const ProductDetailsCard = (props) => {
             {weight}
           </li>
         </div>
+
+        {/* Show colors */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-2">Color:</h3>
+          <div className="flex space-x-2">
+            {detail.map((item, index) => (
+              <button
+                key={index}
+                style={{ backgroundColor: item.color }}
+                className={`w-8 h-8  rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300`}
+                onClick={() => {
+                  setImages(item.images);
+                }}
+              ></button>
+            ))}
+          </div>
+        </div>
+
         <p className="product-details-card-price">
           <span>Price: </span> MAD{newPrice} <del>MAD{price}</del>
         </p>

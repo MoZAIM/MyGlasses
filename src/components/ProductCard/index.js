@@ -9,7 +9,7 @@ import "./index.css";
 
 const ProductCard = (props) => {
   const { product } = props;
-  const { id, name, brand, rating, price, newPrice, image } = product;
+  const { id, name, brand, rating, price, newPrice, image, images } = product;
 
   const [isAddedToCart, setIsAddedToCart] = useState(false);
   const [isAddedToWishlist, setIsAddedToWishlist] = useState(false);

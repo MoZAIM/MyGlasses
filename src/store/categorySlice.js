@@ -27,14 +27,10 @@ const categoriesSlice = createSlice({
 });
 
 export const getCategories = createAsyncThunk("categories/get", async () => {
-    const res = await api.get('/category')
-    if (res.data) {
-  
-      console.log( "demo : ",res.data)
-      return res.data;
-    }
-  });
-
-
+  const res = await api.get("/category");
+  if (res.data) {
+    return res.data;
+  }
+});
 
 export default categoriesSlice.reducer;

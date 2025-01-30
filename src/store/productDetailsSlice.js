@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { statusCode } from "../utils/statusCode";
 import { productsList } from "../eyesomeData";
+import api from "../lib/api";
 
 const initialState = {
   data: {},
@@ -29,11 +30,13 @@ const productDetailsSlice = createSlice({
 export const getProductDetails = createAsyncThunk(
   "productDetails/get",
   async (id) => {
-    const response = await fetch("http://localhost:5000/product");
-    if (response.ok) {
+    try {
+      const response = await api.get("http://localhost:5000/product");
+      console.log("🚀 ~ response:", response);
 
-      console.log( "test : ",response)
-      return productsList.find((product) => product.id === id);
+      return response.data.find((product) => product.id === id);
+    } catch (error) {
+      console.error(error);
     }
   }
 );
