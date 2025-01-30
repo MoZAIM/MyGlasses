@@ -40,13 +40,10 @@ const ProductDetailsCard = (props) => {
   const [isAddedToCart, setIsAddedToCart] = useState(false);
   const [isAddedToWishlist, setIsAddedToWishlist] = useState(false);
   const [displayImage, setDisplayImage] = useState(image);
-  const [images, setImages] = useState(
-    detail ? (detail[0] ? detail[0].images : []) : []
-  );
+
+  const [imagesIndex, setImagesIndex] = useState(0);
 
   const [loading, setLoading] = useState(true);
-
-  console.log("🚀 ~ ProductDetailsCard ~ images:", images);
 
   const cartProducts = useSelector((state) => state.cart);
   const wishlistProducts = useSelector((state) => state.wishlist);
@@ -97,7 +94,7 @@ const ProductDetailsCard = (props) => {
         {/* Display images */}
         <div>
           <div className="flex gap-4 py-4 justify-center overflow-x-auto">
-            {images?.map((item, index) => (
+            {data.detail[imagesIndex].images?.map((item, index) => (
               <img
                 key={index}
                 src={item?.image}
@@ -157,7 +154,7 @@ const ProductDetailsCard = (props) => {
                 style={{ backgroundColor: item.color }}
                 className={`w-8 h-8  rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300`}
                 onClick={() => {
-                  setImages(item.images);
+                  setImagesIndex(index);
                 }}
               ></button>
             ))}
