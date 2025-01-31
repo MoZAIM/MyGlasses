@@ -13,12 +13,17 @@ import ErrorCard from "../ErrorCard";
 import { statusCode } from "../../utils/statusCode";
 
 import "./index.css";
+import useApplyFilters from "../../utils/useApplyFilters";
+import ProductCard from "../ProductCard";
+import { addCategory } from "../../store/filtersSlice";
 
 const ProductDetailsCard = (props) => {
   const productId = useParams("id");
   const dispatch = useDispatch();
 
+  // Hooks
   const { data, status } = useSelector((state) => state.productDetails);
+  const filteredData = useApplyFilters();
 
   const {
     id,
@@ -34,12 +39,17 @@ const ProductDetailsCard = (props) => {
     weight,
     detail,
   } = data;
-  console.log("🚀 ~ ProductDetailsCard ~ image:", image);
-  console.log("🚀 ~ ProductDetailsCard ~ detail:", detail);
 
   const [isAddedToCart, setIsAddedToCart] = useState(false);
   const [isAddedToWishlist, setIsAddedToWishlist] = useState(false);
   const [displayImage, setDisplayImage] = useState(image);
+
+  const [visibleItems, setVisibleItems] = useState(4);
+
+  // this state for loasing more recommanded products
+  const handleShowMore = () => {
+    setVisibleItems(visibleItems + 4); // Load 4 more items each time
+  };
 
   const [imagesIndex, setImagesIndex] = useState(0);
 
@@ -59,6 +69,7 @@ const ProductDetailsCard = (props) => {
   useEffect(() => {
     (async () => {
       await dispatch(getProductDetails(productId.id));
+      await dispatch(addCategory("ACCESSOIRES"));
       setLoading(false);
     })();
   }, [dispatch, productId.id]);
@@ -80,140 +91,171 @@ const ProductDetailsCard = (props) => {
 
   if (loading && !detail) return "loading ...";
 
+  // Recommanded Products
+  const renderRecommandedProducts = () => (
+    <div className=" mt-4 ">
+      <hr className=" my-4 " />
+      <div className="flex justify-between m-3">
+        {/* Title in French */}
+        <h1 className=" font-bold ">Produits Recommandés</h1>
+
+        {/* Show More button */}
+        {filteredData.length > visibleItems && (
+          <button
+            className="show-more-button underline "
+            onClick={handleShowMore}
+          >
+            Voir plus
+          </button>
+        )}
+      </div>
+
+      {/* Product List */}
+      <ul className="row product-list-container d-flex">
+        {filteredData.slice(0, 4).map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </ul>
+    </div>
+  );
+
   const renderProductDetailsCardSuccessView = () => (
-    <div className="product-details-card gap-5 pt-8">
-      <div>
-        <div className="relative h-[85%] p-7 bg-black/[0.075] flex items-center justify-center rounded-lg">
-          <img
-            className="product-details-card-image"
-            src={displayImage || image}
-            alt="productImage"
-          />
-        </div>
-
-        {/* Display images */}
+    <div className="flex flex-col">
+      <div className="product-details-card gap-5 pt-8">
         <div>
-          <div className="flex gap-4 py-4 justify-center overflow-x-auto">
-            {data.detail[imagesIndex].images?.map((item, index) => (
-              <img
-                key={index}
-                src={item?.image}
-                alt="Thumbnail 1"
-                className="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
-                onClick={() => {
-                  setDisplayImage(item.image);
-                }}
-              />
-            ))}
+          <div className="relative h-[85%] p-7 bg-black/[0.075] flex items-center justify-center rounded-lg">
+            <img
+              className="product-details-card-image"
+              src={displayImage || image}
+              alt="productImage"
+            />
           </div>
-        </div>
-      </div>
 
-      <div className="p-4 product-details-card-description">
-        <h1 className="product-details-card-title">{name}</h1>
-        <p className="product-details-card-info">{description}</p>
-        <div className="flex gap-1 py-2">
-          <p className="product-details-card-rating flex">
-            <AiFillStar className="color-yellow" />
-            <AiFillStar className="color-yellow" />
-            <AiFillStar className="color-yellow" />
-            <AiFillStar className="color-yellow" />
-            <AiFillStar className="color-yellow" />
-          </p>
+          {/* Display images */}
           <div>
-            <span className="text-gray-400">({rating}) Rating</span>
+            <div className="flex gap-4 py-4 justify-center overflow-x-auto">
+              {data.detail[imagesIndex].images?.map((item, index) => (
+                <img
+                  key={index}
+                  src={item?.image}
+                  alt="Thumbnail 1"
+                  className="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
+                  onClick={() => {
+                    setDisplayImage(item.image);
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
-        <p className="about-product-text pt-2">About Product</p>
-        <div className="about-product-details">
-          <li>
-            <span>Brand: </span>
-            {brand}
-          </li>
-          <li>
-            <span>Gender: </span>
-            {gender}
-          </li>
-          <li>
-            <span>Category: </span>
-            {category}
-          </li>
-          <li>
-            <span>Weight: </span>
-            {weight}
-          </li>
-        </div>
 
-        {/* Show colors */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-2">Color:</h3>
-          <div className="flex space-x-2">
-            {detail.map((item, index) => (
+        <div className="p-4 product-details-card-description">
+          <h1 className="product-details-card-title">{name}</h1>
+          <p className="product-details-card-info">{description}</p>
+          <div className="flex gap-1 py-2">
+            <p className="product-details-card-rating flex">
+              <AiFillStar className="color-yellow" />
+              <AiFillStar className="color-yellow" />
+              <AiFillStar className="color-yellow" />
+              <AiFillStar className="color-yellow" />
+              <AiFillStar className="color-yellow" />
+            </p>
+            <div>
+              <span className="text-gray-400">({rating}) Rating</span>
+            </div>
+          </div>
+          <p className="about-product-text pt-2">About Product</p>
+          <div className="about-product-details">
+            <li>
+              <span>Brand: </span>
+              {brand}
+            </li>
+            <li>
+              <span>Gender: </span>
+              {gender}
+            </li>
+            <li>
+              <span>Category: </span>
+              {category}
+            </li>
+            <li>
+              <span>Weight: </span>
+              {weight}
+            </li>
+          </div>
+
+          {/* Show colors */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-2">Color:</h3>
+            <div className="flex space-x-2">
+              {detail.map((item, index) => (
+                <button
+                  key={index}
+                  style={{ backgroundColor: item.color }}
+                  className={`w-8 h-8  rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300`}
+                  onClick={() => {
+                    setImagesIndex(index);
+                  }}
+                ></button>
+              ))}
+            </div>
+          </div>
+
+          <p className="product-details-card-price">
+            <span>Price: </span> MAD{newPrice} <del>MAD{price}</del>
+          </p>
+          <div className="product-details-card-buttons">
+            {!isAddedToCart && (
               <button
-                key={index}
-                style={{ backgroundColor: item.color }}
-                className={`w-8 h-8  rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300`}
-                onClick={() => {
-                  setImagesIndex(index);
-                }}
-              ></button>
-            ))}
+                type="button"
+                className="product-details-card-cart-button"
+                onClick={addToCart}
+              >
+                <span>
+                  <BsHandbagFill />
+                </span>{" "}
+                Add to Cart
+              </button>
+            )}
+            {isAddedToCart && (
+              <Link
+                to="/cart"
+                className="link-item product-details-card-cart-button"
+              >
+                <span>
+                  <BsHandbagFill />
+                </span>
+                Go to Cart
+              </Link>
+            )}
+            {!isAddedToWishlist && (
+              <button
+                type="button"
+                className="product-details-card-cart-button"
+                onClick={addToWishlist}
+              >
+                <span>
+                  <BiSolidBookmarkHeart />
+                </span>{" "}
+                Wishlist Item
+              </button>
+            )}
+            {isAddedToWishlist && (
+              <button
+                type="button"
+                className="product-details-card-cart-button"
+                onClick={removeFromWishlist}
+              >
+                <span>
+                  <BiSolidBookmarkHeart />
+                </span>
+                Remove from Wishlist
+              </button>
+            )}
           </div>
-        </div>
-
-        <p className="product-details-card-price">
-          <span>Price: </span> MAD{newPrice} <del>MAD{price}</del>
-        </p>
-        <div className="product-details-card-buttons">
-          {!isAddedToCart && (
-            <button
-              type="button"
-              className="product-details-card-cart-button"
-              onClick={addToCart}
-            >
-              <span>
-                <BsHandbagFill />
-              </span>{" "}
-              Add to Cart
-            </button>
-          )}
-          {isAddedToCart && (
-            <Link
-              to="/cart"
-              className="link-item product-details-card-cart-button"
-            >
-              <span>
-                <BsHandbagFill />
-              </span>
-              Go to Cart
-            </Link>
-          )}
-          {!isAddedToWishlist && (
-            <button
-              type="button"
-              className="product-details-card-cart-button"
-              onClick={addToWishlist}
-            >
-              <span>
-                <BiSolidBookmarkHeart />
-              </span>{" "}
-              Wishlist Item
-            </button>
-          )}
-          {isAddedToWishlist && (
-            <button
-              type="button"
-              className="product-details-card-cart-button"
-              onClick={removeFromWishlist}
-            >
-              <span>
-                <BiSolidBookmarkHeart />
-              </span>
-              Remove from Wishlist
-            </button>
-          )}
         </div>
       </div>
+      <div>{renderRecommandedProducts()}</div>
     </div>
   );
 

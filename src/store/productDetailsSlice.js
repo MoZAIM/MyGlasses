@@ -32,7 +32,6 @@ export const getProductDetails = createAsyncThunk(
   async (id) => {
     try {
       const response = await api.get("http://localhost:5000/product");
-      console.log("🚀 ~ response:", response);
 
       return response.data.find((product) => product.id === id);
     } catch (error) {

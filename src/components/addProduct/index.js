@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export const AddProduct = () => {
   const [product, setProduct] = useState({
-    id: '',
+    id: "",
     qty: 0,
-    name: '',
-    description: '',
-    brand: '',
-    category: '',
-    gender: '',
-    weight: '',
+    name: "",
+    description: "",
+    brand: "",
+    category: "",
+    gender: "",
+    weight: "",
     quantity: 0,
-    image: '',
+    image: "",
     rating: 0,
     price: 0,
     newPrice: 0,
@@ -19,58 +19,46 @@ export const AddProduct = () => {
     createAt: new Date().toLocaleDateString(),
   });
 
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
-      // State 
-      const [loading, setLoading] = useState(false);
-      const [message, setMessage] = useState('');
-
-      
   const handleChange = (e) => {
-
-
-
-
-
-
     const { name, value, type, checked } = e.target;
     setProduct({
       ...product,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
-
-
-  // habdle submit 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage('');
+    setMessage("");
 
     try {
-      const response = await fetch('http://localhost:5000/product', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5000/product", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(product),
       });
 
       if (response.ok) {
         const data = await response.json();
-        setMessage('Product added successfully!');
-        console.log('Server Response:', data);
+        setMessage("Product added successfully!");
+        console.log("Server Response:", data);
         setProduct({
-          id: '',
+          id: "",
           qty: 0,
-          name: '',
-          description: '',
-          brand: '',
-          category: '',
-          gender: '',
-          weight: '',
+          name: "",
+          description: "",
+          brand: "",
+          category: "",
+          gender: "",
+          weight: "",
           quantity: 0,
-          image: '',
+          image: "",
           rating: 0,
           price: 0,
           newPrice: 0,
@@ -79,7 +67,7 @@ export const AddProduct = () => {
         });
       } else {
         const errorData = await response.json();
-        setMessage(`Error: ${errorData.message || 'Something went wrong.'}`);
+        setMessage(`Error: ${errorData.message || "Something went wrong."}`);
       }
     } catch (error) {
       setMessage(`Error: ${error.message}`);
@@ -87,12 +75,11 @@ export const AddProduct = () => {
       setLoading(false);
     }
   };
-//fin
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <form className="max-w-md mx-auto" onSubmit={handleSubmit}>
-        {/** ID Field */}
+      <form className="" onSubmit={handleSubmit}>
+        {/* ID Field */}
         <div className="relative z-0 w-full mb-5 group">
           <input
             type="text"
@@ -102,10 +89,15 @@ export const AddProduct = () => {
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
           />
-          <label htmlFor="id" className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6">ID (Auto-generated)</label>
+          <label
+            htmlFor="id"
+            className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6"
+          >
+            ID (Auto-generated)
+          </label>
         </div>
 
-        {/** Name Field */}
+        {/* Name Field */}
         <div className="relative z-0 w-full mb-5 group">
           <input
             type="text"
@@ -116,10 +108,15 @@ export const AddProduct = () => {
             placeholder=" "
             required
           />
-          <label htmlFor="name" className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6">Name</label>
+          <label
+            htmlFor="name"
+            className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6"
+          >
+            Name
+          </label>
         </div>
 
-        {/** Description Field */}
+        {/* Description Field */}
         <div className="relative z-0 w-full mb-5 group">
           <textarea
             name="description"
@@ -128,51 +125,74 @@ export const AddProduct = () => {
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
           />
-          <label htmlFor="description" className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6">Description</label>
+          <label
+            htmlFor="description"
+            className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6"
+          >
+            Description
+          </label>
         </div>
 
-        {/** Brand Field */}
-        <div className="relative z-0 w-full mb-5 group">
-          <input
-            type="text"
-            name="brand"
-            value={product.brand}
-            onChange={handleChange}
-            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            placeholder=" "
-            required
-          />
-          <label htmlFor="brand" className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6">Brand</label>
+        {/* Brand, Category, Gender Fields in one row */}
+        <div className="grid sm:grid-cols-1 md:grid-cols-3 md:gap-6">
+          {/* Brand Field */}
+          <div className="relative z-0 w-full mb-5 group">
+            <input
+              type="text"
+              name="brand"
+              value={product.brand}
+              onChange={handleChange}
+              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+              required
+            />
+            <label
+              htmlFor="brand"
+              className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6"
+            >
+              Brand
+            </label>
+          </div>
+
+          {/* Category Field */}
+          <div className="relative z-0 w-full mb-5 group">
+            <input
+              type="text"
+              name="category"
+              value={product.category}
+              onChange={handleChange}
+              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+              required
+            />
+            <label
+              htmlFor="category"
+              className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6"
+            >
+              Category
+            </label>
+          </div>
+
+          {/* Gender Field */}
+          <div className="relative z-0 w-full mb-5 group">
+            <input
+              type="text"
+              name="gender"
+              value={product.gender}
+              onChange={handleChange}
+              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              placeholder=" "
+            />
+            <label
+              htmlFor="gender"
+              className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6"
+            >
+              Gender
+            </label>
+          </div>
         </div>
 
-        {/** Category Field */}
-        <div className="relative z-0 w-full mb-5 group">
-          <input
-            type="text"
-            name="category"
-            value={product.category}
-            onChange={handleChange}
-            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            placeholder=" "
-            required
-          />
-          <label htmlFor="category" className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6">Category</label>
-        </div>
-
-        {/** Gender Field */}
-        <div className="relative z-0 w-full mb-5 group">
-          <input
-            type="text"
-            name="gender"
-            value={product.gender}
-            onChange={handleChange}
-            className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            placeholder=" "
-          />
-          <label htmlFor="gender" className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6">Gender</label>
-        </div>
-
-        {/** Weight Field */}
+        {/* Weight Field */}
         <div className="relative z-0 w-full mb-5 group">
           <input
             type="text"
@@ -182,11 +202,16 @@ export const AddProduct = () => {
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
           />
-          <label htmlFor="weight" className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6">Weight</label>
+          <label
+            htmlFor="weight"
+            className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6"
+          >
+            Weight
+          </label>
         </div>
 
-        {/** Quantity and Qty Fields */}
-        <div className="grid md:grid-cols-2 md:gap-6">
+        {/* Quantity and Qty Fields in one row */}
+        <div className="grid sm:grid-cols-1 md:grid-cols-3 md:gap-6">
           <div className="relative z-0 w-full mb-5 group">
             <input
               type="number"
@@ -197,7 +222,12 @@ export const AddProduct = () => {
               placeholder=" "
               required
             />
-            <label htmlFor="quantity" className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6">Quantity</label>
+            <label
+              htmlFor="quantity"
+              className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6"
+            >
+              Quantity
+            </label>
           </div>
           <div className="relative z-0 w-full mb-5 group">
             <input
@@ -208,11 +238,16 @@ export const AddProduct = () => {
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
             />
-            <label htmlFor="qty" className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6">Qty</label>
+            <label
+              htmlFor="qty"
+              className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6"
+            >
+              Qty
+            </label>
           </div>
         </div>
 
-        {/** Image Field */}
+        {/* Image Field */}
         <div className="relative z-0 w-full mb-5 group">
           <input
             type="text"
@@ -223,10 +258,15 @@ export const AddProduct = () => {
             placeholder=" "
             required
           />
-          <label htmlFor="image" className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6">Image URL</label>
+          <label
+            htmlFor="image"
+            className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6"
+          >
+            Image URL
+          </label>
         </div>
 
-        {/** Rating Field */}
+        {/* Rating Field */}
         <div className="relative z-0 w-full mb-5 group">
           <input
             type="number"
@@ -237,11 +277,16 @@ export const AddProduct = () => {
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
           />
-          <label htmlFor="rating" className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6">Rating</label>
+          <label
+            htmlFor="rating"
+            className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6"
+          >
+            Rating
+          </label>
         </div>
 
-        {/** Price Fields */}
-        <div className="grid md:grid-cols-2 md:gap-6">
+        {/* Price Fields in one row */}
+        <div className="grid sm:grid-cols-1 md:grid-cols-3 md:gap-6">
           <div className="relative z-0 w-full mb-5 group">
             <input
               type="number"
@@ -253,7 +298,12 @@ export const AddProduct = () => {
               placeholder=" "
               required
             />
-            <label htmlFor="price" className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6">Price</label>
+            <label
+              htmlFor="price"
+              className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6"
+            >
+              Price
+            </label>
           </div>
           <div className="relative z-0 w-full mb-5 group">
             <input
@@ -265,11 +315,16 @@ export const AddProduct = () => {
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
             />
-            <label htmlFor="newPrice" className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6">New Price</label>
+            <label
+              htmlFor="newPrice"
+              className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6"
+            >
+              New Price
+            </label>
           </div>
         </div>
 
-        {/** Trending Checkbox */}
+        {/* Trending Checkbox */}
         <div className="relative z-0 w-full mb-5 group">
           <label className="flex items-center space-x-2">
             <input
@@ -283,7 +338,7 @@ export const AddProduct = () => {
           </label>
         </div>
 
-        {/** Date (Readonly) */}
+        {/* Date (Readonly) */}
         <div className="relative z-0 w-full mb-5 group">
           <input
             type="text"
@@ -292,7 +347,12 @@ export const AddProduct = () => {
             className="block py-2.5 px-0 w-full text-sm bg-transparent appearance-none focus:outline-none focus:ring-0 peer"
             readOnly
           />
-          <label htmlFor="createAt" className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6">Created At</label>
+          <label
+            htmlFor="createAt"
+            className="peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-6"
+          >
+            Created At
+          </label>
         </div>
 
         <button
@@ -300,12 +360,19 @@ export const AddProduct = () => {
           className="mt-6 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all"
           disabled={loading}
         >
-          {loading ? 'Adding Product...' : 'Add Product'}
+          {loading ? "Adding Product..." : "Add Product"}
         </button>
       </form>
+
       {message && (
         <div className="mt-4 text-center">
-          <p className={message.includes('Error') ? 'text-red-600' : 'text-green-600'}>{message}</p>
+          <p
+            className={
+              message.includes("Error") ? "text-red-600" : "text-green-600"
+            }
+          >
+            {message}
+          </p>
         </div>
       )}
     </div>
