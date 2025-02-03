@@ -115,7 +115,7 @@ export default function CreateProductPage() {
 
     console.log("Form Data Submitted:", data);
 
-    const res = await dispatch(createProduct(formData));
+    // const res = await dispatch(createProduct(formData));
     setLoading(false);
     navigate("/products");
   };
@@ -330,6 +330,50 @@ export default function CreateProductPage() {
 
         {/* Color and Image Upload Section */}
         <div className="w-full sm:w-1/2 relative mt-6 sm:mt-0">
+          {/* --------------------------- */}
+          <div className="mb-4 border p-4 rounded ">
+            <div className="flex justify-between">
+              <div className="flex items-center gap-3">
+                <h2 className="text-lg font-semibold">Default Image : </h2>
+              </div>
+              <button
+                type="button"
+                className="cart-product-remove-button"
+                onClick={() => setDefaultImage(null)}
+              >
+                Remove
+              </button>
+            </div>
+
+            {/* Default image */}
+            <div className="mt-4 flex flex-wrap gap-3">
+              {defaultImage && (
+                <div className="relative border flex justify-center items-center">
+                  <img
+                    src={URL.createObjectURL(defaultImage)}
+                    alt={`Product in ${activeColor}`}
+                    className="w-16 h-16 object-cover rounded"
+                  />
+
+                  <CircleX
+                    className="bg-white text-gray-600 rounded-full absolute -top-3 -right-3 cart-product-update-icon"
+                    onClick={() => setDefaultImage(null)}
+                  />
+                </div>
+              )}
+
+              <label className="cursor-pointer flex items-center gap-2 text-gray-500 border p-3">
+                <Upload size={40} />
+                <input
+                  type="file"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => setDefaultImage(e.target.files[0])}
+                />
+              </label>
+            </div>
+          </div>
+
           <h2 className="text-lg font-semibold">Select Available Colors</h2>
           <div className="flex items-center mt-2 gap-2">
             <div className="flex gap-2">
@@ -431,48 +475,6 @@ export default function CreateProductPage() {
               </div>
             </div>
           )}
-          <div className="mt-4 border p-4 rounded">
-            <div className="flex justify-between">
-              <div className="flex items-center gap-3">
-                <h2 className="text-lg font-semibold">Default Image : </h2>
-              </div>
-              <button
-                type="button"
-                className="cart-product-remove-button"
-                onClick={() => setDefaultImage(null)}
-              >
-                Remove
-              </button>
-            </div>
-
-            {/* Default image */}
-            <div className="mt-4 flex flex-wrap gap-3">
-              {defaultImage && (
-                <div className="relative border flex justify-center items-center">
-                  <img
-                    src={URL.createObjectURL(defaultImage)}
-                    alt={`Product in ${activeColor}`}
-                    className="w-16 h-16 object-cover rounded"
-                  />
-
-                  <CircleX
-                    className="bg-white text-gray-600 rounded-full absolute -top-3 -right-3 cart-product-update-icon"
-                    onClick={() => setDefaultImage(null)}
-                  />
-                </div>
-              )}
-
-              <label className="cursor-pointer flex items-center gap-2 text-gray-500 border p-3">
-                <Upload size={40} />
-                <input
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={(e) => setDefaultImage(e.target.files[0])}
-                />
-              </label>
-            </div>
-          </div>
         </div>
       </div>
       <div className="w-full flex justify-center mt-6">
