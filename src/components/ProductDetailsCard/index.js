@@ -16,6 +16,7 @@ import "./index.css";
 import useApplyFilters from "../../utils/useApplyFilters";
 import ProductCard from "../ProductCard";
 import { addCategory } from "../../store/filtersSlice";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const ProductDetailsCard = (props) => {
   const productId = useParams("id");
@@ -24,6 +25,7 @@ const ProductDetailsCard = (props) => {
   // Hooks
   const { data, status } = useSelector((state) => state.productDetails);
   const filteredData = useApplyFilters();
+  console.log("🚀 ~ ProductDetailsCard ~ filteredData:", filteredData);
 
   const {
     id,
@@ -42,7 +44,7 @@ const ProductDetailsCard = (props) => {
 
   const [isAddedToCart, setIsAddedToCart] = useState(false);
   const [isAddedToWishlist, setIsAddedToWishlist] = useState(false);
-  const [displayImage, setDisplayImage] = useState(image);
+  const [displayImage, setDisplayImage] = useState(null);
 
   const [visibleItems, setVisibleItems] = useState(4);
 
@@ -110,7 +112,7 @@ const ProductDetailsCard = (props) => {
         )}
       </div>
 
-      {/* Product List */}
+      {/* recommended Product List */}
       <ul className="row product-list-container d-flex">
         {filteredData.slice(0, 4).map((product) => (
           <ProductCard key={product.id} product={product} />
@@ -126,7 +128,9 @@ const ProductDetailsCard = (props) => {
           <div className="relative h-[85%] p-7 bg-black/[0.075] flex items-center justify-center rounded-lg">
             <img
               className="product-details-card-image"
-              src={displayImage || image}
+              src={
+                displayImage ? getImageUrl(displayImage) : getImageUrl(image)
+              }
               alt="productImage"
             />
           </div>
@@ -137,7 +141,7 @@ const ProductDetailsCard = (props) => {
               {data.detail[imagesIndex].images?.map((item, index) => (
                 <img
                   key={index}
-                  src={item?.image}
+                  src={getImageUrl(item?.image)}
                   alt="Thumbnail 1"
                   className="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
                   onClick={() => {

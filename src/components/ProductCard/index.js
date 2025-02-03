@@ -6,10 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { addCartItem } from "../../store/cartSlice";
 import { addWishlistItem, removeWishlistItem } from "../../store/wishlistSlice";
 import "./index.css";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const ProductCard = (props) => {
   const { product } = props;
-  const { id, name, brand, rating, price, newPrice, image, images } = product;
+  const { id, name, brand, rating, price, newPrice, image } = product;
 
   const [isAddedToCart, setIsAddedToCart] = useState(false);
   const [isAddedToWishlist, setIsAddedToWishlist] = useState(false);
@@ -26,10 +27,12 @@ const ProductCard = (props) => {
   }, [wishlistProducts, id]);
 
   const dispatch = useDispatch();
+
   const addToCart = () => {
     setIsAddedToCart(true);
     dispatch(addCartItem({ ...product, qty: 1 }));
   };
+
   const addToWishlist = () => {
     setIsAddedToWishlist(true);
     dispatch(addWishlistItem(product));
@@ -39,6 +42,7 @@ const ProductCard = (props) => {
     setIsAddedToWishlist(false);
     dispatch(removeWishlistItem(id));
   };
+
   return (
     <li className="col-12 col-md-6 col-lg-4 col-xl-3 mb-4 d-flex">
       <div className="product-card shadow-sm">
@@ -46,18 +50,20 @@ const ProductCard = (props) => {
           to={`/product/${id}`}
           className="link-item product-image-container"
         >
-          <img src={image} className="product-image" alt="productImage" />
+          <img
+            src={getImageUrl(image)}
+            className="product-image"
+            alt="productImage"
+          />
         </Link>
         <div>
           <section>
             <div className="product-card-details">
               <h2>{name}</h2>
               <div className="flex gap-1">
-                <div>
-                  {rating}
-                </div>
+                <div>{rating}</div>
                 <div className="mt-[2px]">
-                  <AiFillStar className="color-yellow !text-[#FACC15]" />{" "}
+                  <AiFillStar className="color-yellow !text-[#FACC15]" />
                 </div>
                 <div>
                   <span className="text-gray-400 text-xs">Rating</span>
