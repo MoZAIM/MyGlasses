@@ -16,8 +16,8 @@ export default function CreateProductPage() {
     quantity: "",
     brand: "",
     category: "",
-    gender: "",
-    newPrice: "",
+    gender: null,
+    newPrice: null,
     trending: false,
   });
   const [colors, setColors] = useState(["#c15353", "#149c9e", "#a1b70b"]);
@@ -78,10 +78,28 @@ export default function CreateProductPage() {
   };
 
   const handleFormSubmit = async (data) => {
-    const formData = new FormData();
-
     setLoading(true); // Start loading
 
+    // Validation to check if there are colors without images
+    const colorsWithoutImages = colors.filter(
+      (color) => images[color]?.length === 0
+    );
+    console.log(
+      "🚀 ~ handleFormSubmit ~ colorsWithoutImages:",
+      colorsWithoutImages
+    );
+
+    if (colorsWithoutImages.length === 0) {
+      alert(
+        `Please upload at least one image for each color: ${colorsWithoutImages.join(
+          ", "
+        )}`
+      );
+      setLoading(false); // Stop loading
+      return;
+    }
+
+    const formData = new FormData();
     formData.append("product-information", JSON.stringify(data));
     formData.append("defaultImage", defaultImage);
 
@@ -125,150 +143,179 @@ export default function CreateProductPage() {
           <h1 className="text-2xl font-bold mb-4">Create New Product</h1>
           <h2 className="text-lg font-semibold">Product Information</h2>
 
-          <Controller
-            name="name"
-            control={control}
-            defaultValue={product.name}
-            rules={{ required: "Product name is required" }}
-            render={({ field }) => (
-              <input
-                {...field}
-                type="text"
-                placeholder="Product Name"
-                className="w-full p-2 border rounded mt-2"
-              />
+          <div>
+            <Controller
+              name="name"
+              control={control}
+              defaultValue={product.name}
+              rules={{ required: "Product name is required" }}
+              render={({ field }) => (
+                <input
+                  {...field}
+                  type="text"
+                  placeholder="Product Name"
+                  className="w-full p-2 border rounded mt-2"
+                />
+              )}
+            />
+            {errors?.name && (
+              <p className="text-red-500">{errors.name.message}</p>
             )}
-          />
-          {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+          </div>
 
-          <Controller
-            name="description"
-            control={control}
-            defaultValue={product.description}
-            render={({ field }) => (
-              <textarea
-                {...field}
-                placeholder="Description"
-                className="w-full p-2 border rounded mt-2"
-              />
-            )}
-          />
+          <div>
+            {" "}
+            <Controller
+              name="description"
+              control={control}
+              defaultValue={product.description}
+              render={({ field }) => (
+                <textarea
+                  {...field}
+                  placeholder="Description"
+                  className="w-full p-2 border rounded mt-2"
+                />
+              )}
+            />
+          </div>
 
           {/* Category and Gender dropdowns */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-            <Controller
-              name="category"
-              control={control}
-              defaultValue={product.category}
-              rules={{ required: "Category is required" }}
-              render={({ field }) => (
-                <select
-                  {...field}
-                  className="w-full p-2 border rounded"
-                  onChange={(e) => setValue("category", e.target.value)}
-                >
-                  <option value="">Select Category</option>
-                  <option value="Sports">Sports</option>
-                  <option value="Sunglasses">Sunglasses</option>
-                  <option value="Accessories">Accessories</option>
-                </select>
+            <div className="flex flex-col">
+              <Controller
+                name="category"
+                control={control}
+                defaultValue={product.category}
+                rules={{ required: "Category is required" }}
+                render={({ field }) => (
+                  <select
+                    {...field}
+                    className="w-full p-2 border rounded bg-white"
+                    onChange={(e) => setValue("category", e.target.value)}
+                  >
+                    <option value="">Select Category</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Sunglasses">Sunglasses</option>
+                    <option value="Accessories">Accessories</option>
+                  </select>
+                )}
+              />
+              {errors?.category && (
+                <p className="text-red-500">{errors.category.message}</p>
               )}
-            />
-            {errors.category && (
-              <p className="text-red-500">{errors.category.message}</p>
-            )}
+            </div>
 
-            <Controller
-              name="gender"
-              control={control}
-              defaultValue={product.gender}
-              rules={{ required: "Gender is required" }}
-              render={({ field }) => (
-                <select
-                  {...field}
-                  className="w-full p-2 border rounded"
-                  onChange={(e) => setValue("gender", e.target.value)}
-                >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Unisex">Unisex</option>
-                </select>
+            <div className="flex flex-col">
+              <Controller
+                name="gender"
+                control={control}
+                defaultValue={product.gender}
+                rules={{ required: "Gender is required" }}
+                render={({ field }) => (
+                  <select
+                    {...field}
+                    className="w-full p-2 border rounded bg-white"
+                    onChange={(e) => setValue("gender", e.target.value)}
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                )}
+              />
+              {errors?.gender && (
+                <p className="text-red-500">{errors.gender.message}</p>
               )}
-            />
-            {errors.gender && (
-              <p className="text-red-500">{errors.gender.message}</p>
-            )}
+            </div>
           </div>
 
           {/* Numeric fields validation */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2">
-            <Controller
-              name="price"
-              control={control}
-              defaultValue={product.price}
-              rules={{
-                required: "Price is required",
-                pattern: {
-                  value: /^[0-9]+(\.[0-9]{1,2})?$/,
-                  message: "Invalid price format",
-                },
-              }}
-              render={({ field }) => (
-                <input
-                  {...field}
-                  type="text"
-                  placeholder="Price"
-                  className="w-full p-2 border rounded"
-                />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+            <div className="flex flex-col">
+              <Controller
+                name="price"
+                control={control}
+                defaultValue={product.price}
+                rules={{
+                  required: "Price is required",
+                  pattern: {
+                    value: /^[0-9]+(\.[0-9]{1,2})?$/,
+                    message: "Invalid price format",
+                  },
+                }}
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    type="number"
+                    placeholder="Price"
+                    className="w-full p-2 border rounded"
+                  />
+                )}
+              />
+              {errors?.price && (
+                <p className="text-red-500">{errors.price.message}</p>
               )}
-            />
-            {errors.price && (
-              <p className="text-red-500">{errors.price.message}</p>
-            )}
-
-            <Controller
-              name="newPrice"
-              control={control}
-              defaultValue={product.newPrice}
-              render={({ field }) => (
-                <input
-                  {...field}
-                  type="text"
-                  placeholder="New Price"
-                  className="w-full p-2 border rounded"
-                />
+            </div>
+            <div>
+              <Controller
+                name="newPrice"
+                control={control}
+                defaultValue={product.newPrice}
+                rules={{ required: "New price is required" }}
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    type="number"
+                    placeholder="New Price"
+                    className="w-full p-2 border rounded"
+                  />
+                )}
+              />{" "}
+              {errors?.newPrice && (
+                <p className="text-red-500">{errors.newPrice.message}</p>
               )}
-            />
+            </div>
           </div>
 
           {/* Other Inputs */}
-          <Controller
-            name="weight"
-            control={control}
-            defaultValue={product.weight}
-            render={({ field }) => (
-              <input
-                {...field}
-                type="text"
-                placeholder="Weight"
-                className="w-full p-2 border rounded mt-2"
-              />
+          <div>
+            <Controller
+              name="weight"
+              control={control}
+              defaultValue={product.weight}
+              rules={{ required: "weight is required" }}
+              render={({ field }) => (
+                <input
+                  {...field}
+                  type="text"
+                  placeholder="Weight"
+                  className="w-full p-2 border rounded mt-2"
+                />
+              )}
+            />
+            {errors?.weight && (
+              <p className="text-red-500">{errors.weight.message}</p>
             )}
-          />
-          <Controller
-            name="quantity"
-            control={control}
-            defaultValue={product.quantity}
-            render={({ field }) => (
-              <input
-                {...field}
-                type="text"
-                placeholder="Quantity"
-                className="w-full p-2 border rounded mt-2"
-              />
+          </div>
+          <div>
+            <Controller
+              name="quantity"
+              control={control}
+              defaultValue={product.quantity}
+              rules={{ required: "quantity is required" }}
+              render={({ field }) => (
+                <input
+                  {...field}
+                  type="text"
+                  placeholder="Quantity"
+                  className="w-full p-2 border rounded mt-2"
+                />
+              )}
+            />
+            {errors?.quantity && (
+              <p className="text-red-500">{errors.quantity.message}</p>
             )}
-          />
+          </div>
           <label className="flex items-center gap-2 mt-3">
             <input
               type="checkbox"
