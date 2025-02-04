@@ -7,15 +7,17 @@ import { BiSolidBookmarkHeart } from "react-icons/bi";
 import { BsHandbagFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { getProductDetails } from "../../store/productDetailsSlice";
+import {
+  getProductDetails,
+  getProductsByCategory,
+} from "../../store/productDetailsSlice";
 import Loader from "../Loader";
 import ErrorCard from "../ErrorCard";
 import { statusCode } from "../../utils/statusCode";
 
 import "./index.css";
-import useApplyFilters from "../../utils/useApplyFilters";
+// import useApplyFilters from "../../utils/useApplyFilters";
 import ProductCard from "../ProductCard";
-import { addCategory } from "../../store/filtersSlice";
 import { getImageUrl } from "../../utils/getImageUrl";
 
 const ProductDetailsCard = (props) => {
@@ -23,9 +25,13 @@ const ProductDetailsCard = (props) => {
   const dispatch = useDispatch();
 
   // Hooks
-  const { data, status } = useSelector((state) => state.productDetails);
-  const filteredData = useApplyFilters();
-  console.log("🚀 ~ ProductDetailsCard ~ filteredData:", filteredData);
+  const {
+    data,
+    status,
+    relatedProducts: filteredData,
+  } = useSelector((state) => state.productDetails);
+
+  // const filteredData = useApplyFilters();
 
   const {
     id,
@@ -70,8 +76,8 @@ const ProductDetailsCard = (props) => {
 
   useEffect(() => {
     (async () => {
+      dispatch(getProductsByCategory("ACCESSOIRES"));
       await dispatch(getProductDetails(productId.id));
-      await dispatch(addCategory("ACCESSOIRES"));
       setLoading(false);
     })();
   }, [dispatch, productId.id]);
@@ -91,7 +97,7 @@ const ProductDetailsCard = (props) => {
     setIsAddedToWishlist(false);
   };
 
-  if (loading && !detail) return "loading ...";
+  if (loading && !detail) return <Loader />;
 
   // Recommanded Products
   const renderRecommandedProducts = () => (
@@ -138,17 +144,18 @@ const ProductDetailsCard = (props) => {
           {/* Display images */}
           <div>
             <div className="flex gap-4 py-4 justify-center overflow-x-auto">
-              {data.detail[imagesIndex].images?.map((item, index) => (
-                <img
-                  key={index}
-                  src={getImageUrl(item?.image)}
-                  alt="Thumbnail 1"
-                  className="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
-                  onClick={() => {
-                    setDisplayImage(item.image);
-                  }}
-                />
-              ))}
+              {data?.detail &&
+                data?.detail[imagesIndex]?.images?.map((item, index) => (
+                  <img
+                    key={index}
+                    src={getImageUrl(item?.image)}
+                    alt="Thumbnail 1"
+                    className="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
+                    onClick={() => {
+                      setDisplayImage(item.image);
+                    }}
+                  />
+                ))}
             </div>
           </div>
         </div>
@@ -192,7 +199,7 @@ const ProductDetailsCard = (props) => {
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-2">Color:</h3>
             <div className="flex space-x-2">
-              {detail.map((item, index) => (
+              {detail?.map((item, index) => (
                 <button
                   key={index}
                   style={{ backgroundColor: item.color }}
