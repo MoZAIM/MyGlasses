@@ -19,6 +19,8 @@ import "./index.css";
 // import useApplyFilters from "../../utils/useApplyFilters";
 import ProductCard from "../ProductCard";
 import { getImageUrl } from "../../utils/getImageUrl";
+import ProductModal from "../modals/ProductModal.jsx";
+import { RecommandedProducts } from "../Products/RecommandedProducts.jsx";
 
 const ProductDetailsCard = (props) => {
   const productId = useParams("id");
@@ -53,6 +55,7 @@ const ProductDetailsCard = (props) => {
   const [displayImage, setDisplayImage] = useState(null);
 
   const [visibleItems, setVisibleItems] = useState(4);
+  const [isOpen, setIsOpen] = useState(false);
 
   // this state for loasing more recommanded products
   const handleShowMore = () => {
@@ -83,7 +86,8 @@ const ProductDetailsCard = (props) => {
   }, [dispatch, productId.id]);
 
   const addToCart = () => {
-    dispatch(addCartItem({ ...data, qty: 1 }));
+    setIsOpen(true);
+    if (isAddedToCart) dispatch(addCartItem({ ...data, qty: 1 }));
     setIsAddedToCart(true);
   };
 
@@ -103,7 +107,7 @@ const ProductDetailsCard = (props) => {
   const renderRecommandedProducts = () => (
     <div className=" mt-4 ">
       <hr className=" my-4 " />
-      <div className="flex justify-between m-3">
+      <div className="flex justify-between">
         {/* Title in French */}
         <h1 className=" font-bold ">Produits Recommandés</h1>
 
@@ -119,16 +123,19 @@ const ProductDetailsCard = (props) => {
       </div>
 
       {/* recommended Product List */}
-      <ul className="row product-list-container d-flex">
-        {filteredData.slice(0, 4).map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </ul>
+      <RecommandedProducts products={filteredData} allowDetails={true} />
     </div>
   );
 
   const renderProductDetailsCardSuccessView = () => (
     <div className="flex flex-col">
+      <ProductModal
+        accessories={filteredData}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        product={data}
+      />
+
       <div className="product-details-card gap-5 pt-8">
         <div>
           <div className="relative h-[85%] p-7 bg-black/[0.075] flex items-center justify-center rounded-lg">
@@ -216,29 +223,16 @@ const ProductDetailsCard = (props) => {
             <span>Price: </span> MAD{newPrice} <del>MAD{price}</del>
           </p>
           <div className="product-details-card-buttons">
-            {!isAddedToCart && (
-              <button
-                type="button"
-                className="product-details-card-cart-button"
-                onClick={addToCart}
-              >
-                <span>
-                  <BsHandbagFill />
-                </span>{" "}
-                Add to Cart
-              </button>
-            )}
-            {isAddedToCart && (
-              <Link
-                to="/cart"
-                className="link-item product-details-card-cart-button"
-              >
-                <span>
-                  <BsHandbagFill />
-                </span>
-                Go to Cart
-              </Link>
-            )}
+            <button
+              type="button"
+              className="product-details-card-cart-button"
+              onClick={addToCart}
+            >
+              <span>
+                <BsHandbagFill />
+              </span>{" "}
+              Add to Cart
+            </button>
             {!isAddedToWishlist && (
               <button
                 type="button"
